@@ -4,21 +4,37 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ie.app.R;
 import ie.app.main.DonationApp;
+import ie.app.models.Donation;
 
 public class Base extends AppCompatActivity {
     public DonationApp app;
+    public final int target = 10000;
+    public int totalDonated = 0;
+    public static List<Donation> donations = new ArrayList<Donation>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         app = (DonationApp) getApplication();
+
+        app.dbManager.open();
+        app.dbManager.setTotalDonated(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        app.dbManager.close();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -33,7 +49,7 @@ public class Base extends AppCompatActivity {
         MenuItem donate = menu.findItem(R.id.menuDonate);
         MenuItem reset = menu.findItem(R.id.menuReset);
 
-        if (app.donations.isEmpty()) {
+        if (app.dbManager.getAll().isEmpty()) {
             report.setEnabled(false);
             reset.setEnabled(false);
         } else {
@@ -43,7 +59,7 @@ public class Base extends AppCompatActivity {
 
         if (this instanceof Donate) {
             donate.setVisible(false);
-            if (!app.donations.isEmpty()) {
+            if (!app.dbManager.getAll().isEmpty()) {
                 report.setVisible(true);
                 reset.setEnabled(true);
             }

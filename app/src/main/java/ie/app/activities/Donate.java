@@ -2,9 +2,11 @@ package ie.app.activities;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -84,7 +86,7 @@ public class Donate extends Base {
 
     @Override
     public void reset(MenuItem item) {
-        app.donations.clear();
+        app.dbManager.reset();
         app.totalDonated = 0;
         amountTotal.setText("$" + app.totalDonated);
         progressBar.setProgress(app.totalDonated);
